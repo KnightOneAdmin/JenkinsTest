@@ -39,64 +39,41 @@ android {
         cruncherEnabled = false
         useNewCruncher = false
     }
-    //修改生成的apk名字
-//    applicationVariants.all { variant ->
-//        if (variant.buildType.name.equals('release')) {
-//            variant.outputs.each { output ->
-//                def outputFile = output.outputFile
-//                if (outputFile != null && outputFile.name.endsWith('.apk')) {
-//                    //如果不是jenkins就不用修改路径
-//                    if ("false".equals(IS_JENKINS)) {
-//                        def fileName = "apkName_${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
-//                        output.outputFile = new File(outputFile.parent, fileName)
-//                    } else {
-//                        def fileName = "apkName_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
-//                        //Jenkins输出路径
-////                                output.outputFile = new File("D:/upload/dianjianbao/apk", fileName)
-//                        output.outputFile = new File("D:/upload/dianjianbao/apk", fileName)
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    //多渠道打包
-//    productFlavors {
-//        web {}
-//        baidu {}
-//        c360 {}
-//        qq {}
-//        oppo {}
-//        vivo {}
-//        huawei {}
-//        mi {}
-//        meizu {}
-//        lenovo {}
-//        sogou {}
-//        wandoujia {}
-//        samsung {}
-//
-//        //    //注意我注释掉的，可以去掉注释，那样的话，下面这句就可以不用了
-//        productFlavors.all {
-//            flavor -> flavor.manifestPlaceholders = [CHANNEL: name]
-//        }
-//    }
 
+    //修改生成的apk名字  //主要内容就是判断是否由Jenkins构建,如果是那就根据对应参数生成apk到对应目录,否则正常输出到本地apk目录
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.all { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    //如果不是jenkins就不用修改路径
+                    if ("false".equals(IS_JENKINS)) {
+                        // apk_渠道名-版本号-版本名称-编译时间.apk
+                        def fileName = "apkName_${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
+                        outputFileName = fileName
+                    } else {
+                        def fileName = "apkName_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
+                        //Jenkins输出路径
+                        output.outputFile = new File("/Users/knightoneadmin/MyResources/Desktop/FileInstall/apk", fileName)
+                    }
+                }
+            }
+        }
+    }
+
+    //多渠道打包
     flavorDimensions("money", "channel")
     productFlavors {
-
         vip {
             dimension "money"
         }
-
         free {
             dimension "money"
         }
-
         baidu {
             manifestPlaceholders = [CHANNEL: "baidu"]
             dimension "channel"
         }
-
         xiaomi {
             manifestPlaceholders = [CHANNEL: "xiaomi"]
             dimension "channel"
