@@ -7,20 +7,103 @@ def releaseTime() {
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.knight.jenkinstest"
+        applicationId BUILD_APPLICATIONID
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {  //添加我们签名文件配置
+        releaseConfig {
+            storeFile file(KEYSTORE_FILE)
+            storePassword KEYSTORE_PWD
+            keyAlias KEY_ALIAS
+            keyPassword KEY_PWD
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.releaseConfig
+        }
+        debug {
+            minifyEnabled false
+        }
+    }
+    aaptOptions {
+        cruncherEnabled = false
+        useNewCruncher = false
+    }
+    //修改生成的apk名字
+//    applicationVariants.all { variant ->
+//        if (variant.buildType.name.equals('release')) {
+//            variant.outputs.each { output ->
+//                def outputFile = output.outputFile
+//                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+//                    //如果不是jenkins就不用修改路径
+//                    if ("false".equals(IS_JENKINS)) {
+//                        def fileName = "apkName_${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
+//                        output.outputFile = new File(outputFile.parent, fileName)
+//                    } else {
+//                        def fileName = "apkName_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
+//                        //Jenkins输出路径
+////                                output.outputFile = new File("D:/upload/dianjianbao/apk", fileName)
+//                        output.outputFile = new File("D:/upload/dianjianbao/apk", fileName)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    //多渠道打包
+//    productFlavors {
+//        web {}
+//        baidu {}
+//        c360 {}
+//        qq {}
+//        oppo {}
+//        vivo {}
+//        huawei {}
+//        mi {}
+//        meizu {}
+//        lenovo {}
+//        sogou {}
+//        wandoujia {}
+//        samsung {}
+//
+//        //    //注意我注释掉的，可以去掉注释，那样的话，下面这句就可以不用了
+//        productFlavors.all {
+//            flavor -> flavor.manifestPlaceholders = [CHANNEL: name]
+//        }
+//    }
+
+    flavorDimensions("money", "channel")
+    productFlavors {
+
+        vip {
+            dimension "money"
+        }
+
+        free {
+            dimension "money"
+        }
+
+        baidu {
+            manifestPlaceholders = [CHANNEL: "baidu"]
+            dimension "channel"
+        }
+
+        xiaomi {
+            manifestPlaceholders = [CHANNEL: "xiaomi"]
+            dimension "channel"
         }
     }
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -29,4 +112,8 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    /*友盟统计需要的最新版本组件化基础库和统计SDK*/
+    implementation 'com.umeng.sdk:common:latest.integration'
+    implementation 'com.umeng.sdk:analytics:latest.integration'
 }
