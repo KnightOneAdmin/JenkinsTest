@@ -39,29 +39,6 @@ android {
         cruncherEnabled = false
         useNewCruncher = false
     }
-
-    //修改生成的apk名字  //主要内容就是判断是否由Jenkins构建,如果是那就根据对应参数生成apk到对应目录,否则正常输出到本地apk目录
-    applicationVariants.all { variant ->
-        if (variant.buildType.name == "release") {
-            variant.outputs.all { output ->
-                def outputFile = output.outputFile
-                if (outputFile != null && outputFile.name.endsWith('.apk')) {
-                    //如果不是jenkins就不用修改路径
-                    if ("false".equals(IS_JENKINS)) {
-                        // apk_渠道名-版本号-版本名称-编译时间.apk
-                        def fileName = "apkName_${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
-                        outputFileName = fileName
-                    } else {
-                        def fileName = "apkName_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
-                        //Jenkins输出路径
-//                      output.outputFile = new File("/Users/knightoneadmin/MyResources/Desktop/FileInstall/apk", fileName)
-                        output.outputFile = new File(outputFile.parent, fileName)
-                    }
-                }
-            }
-        }
-    }
-
     //多渠道打包
     flavorDimensions("money", "channel")
     productFlavors {
@@ -78,6 +55,27 @@ android {
         xiaomi {
             manifestPlaceholders = [CHANNEL: "xiaomi"]
             dimension "channel"
+        }
+    }
+    //修改生成的apk名字  //主要内容就是判断是否由Jenkins构建,如果是那就根据对应参数生成apk到对应目录,否则正常输出到本地apk目录
+    applicationVariants.all { variant ->
+        if (variant.buildType.name == "release") {
+            variant.outputs.all { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    //如果不是jenkins就不用修改路径
+                    if ("false".equals(IS_JENKINS)) {
+                        // apk_渠道名-版本号-版本名称-编译时间.apk
+                        def fileName = "v_${defaultConfig.versionName}_${releaseTime()}_${variant.flavorName}.apk"
+                        outputFileName = fileName
+                    } else {
+                        def fileName = "v_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
+                        //Jenkins输出路径
+//                      output.outputFile = new File("/Users/knightoneadmin/MyResources/Desktop/FileInstall/apk", fileName)
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
         }
     }
 }
