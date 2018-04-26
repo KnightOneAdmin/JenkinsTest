@@ -54,7 +54,8 @@ android {
                     } else {
                         def fileName = "apkName_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
                         //Jenkins输出路径
-                        output.outputFile = new File("/Users/knightoneadmin/MyResources/Desktop/FileInstall/apk", fileName)
+//                      output.outputFile = new File("/Users/knightoneadmin/MyResources/Desktop/FileInstall/apk", fileName)
+                        output.outputFile = new File(outputFile.parent, fileName)
                     }
                 }
             }
