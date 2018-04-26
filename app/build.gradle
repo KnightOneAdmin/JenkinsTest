@@ -7,7 +7,7 @@ def releaseTime() {
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId BUILD_APPLICATIONID
+        applicationId "com.knight.jenkinstest"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
