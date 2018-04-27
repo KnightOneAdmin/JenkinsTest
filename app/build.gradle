@@ -70,9 +70,10 @@ android {
                         outputFileName = fileName
                     } else {
                         def fileName = "v_${RELEASE_TIME}_${APP_VERSION}_${PRODUCT_FLAVOR}.apk"
+                        outputFileName = fileName
                         //Jenkins输出路径
 //                      output.outputFile = new File("/Users/knightoneadmin/MyResources/Desktop/FileInstall/apk", fileName)
-                        output.outputFile = new File(outputFile.parent, fileName)
+//                        output.outputFile = new File(outputFile.parent, fileName)
                     }
                 }
             }
